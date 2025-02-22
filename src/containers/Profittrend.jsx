@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
-import { Chart } from '@antv/g2';
-import AnNumber from 'animated-number-react';
+import { Chart } from '@antv/g2';  // 导入蚂蚁金服的图表库
+import AnNumber from 'animated-number-react';  // 导入数字动画组件
 
 import Layout from '../layouts/Box';
 import { $icon } from '../utils';
@@ -40,16 +40,26 @@ const MyChart = () => {
     useEffect(() => {
         if (!ref) return;
 
+        // 创建图表实例
         const chart = new Chart({
             container: ref.current,
-            autoFit: true,
-            height: 260,
+            autoFit: true,      // 自适应容器大小
+            height: 260,        // 设置图表高度
         });
+
+        // 载入数据
         chart.data(data);
+
+        // 配置数值轴的别名
         chart.scale('value', { alias: '金额（千元）' });
+
+        // 配置时间轴，移除刻度线
         chart.axis('time', { tickLine: null });
+
+        // 配置数值轴的格式化和样式
         chart.axis('value', {
             label: {
+                // 格式化数值显示，添加千位分隔符
                 formatter: text => text.replace(/(\d)(?=(?:\d{3})+$)/g, '$1,'),
             },
             title: {
@@ -57,14 +67,51 @@ const MyChart = () => {
                 style: { fill: '#aaa' },
             },
         });
+
+        // 设置图例位置在顶部
         chart.legend({ position: 'top' });
-        chart.tooltip(false);
+        
+        // 配置提示框
+        chart.tooltip({
+            showCrosshairs: true,    // 显示十字准线
+            shared: true,            // 同时显示多个数据的提示
+            // 自定义提示内容格式
+            formatter: (datum) => {
+                return {
+                    name: datum.type,     // 显示数据类型（蔬菜类/鱼类）
+                    value: datum.value.toLocaleString() + ' 千元'  // 格式化数值并添加单位
+                };
+            },
+            // 自定义提示框样式
+            domStyles: {
+                'g2-tooltip': {
+                    background: 'rgba(0,0,0,0.8)',  // 半透明黑色背景
+                    color: '#fff',                  // 白色文字
+                    padding: '8px',
+                    borderRadius: '4px',            // 圆角边框
+                },
+                'g2-tooltip-title': {
+                    color: '#fff',
+                    marginBottom: '8px',
+                },
+                'g2-tooltip-list-item': {
+                    color: '#fff',
+                    marginBottom: '4px',
+                },
+            }
+        });
+
+        // 启用鼠标悬停交互
         chart.interaction('active-region');
+
+        // 配置柱状图
         chart
             .interval()
-            .adjust('stack')
-            .position('time*value')
-            .color('type', ['#0fc7abcc', '#ff0000dd']);
+            .adjust('stack')           // 堆叠柱状图
+            .position('time*value')    // X轴为时间，Y轴为数值
+            .color('type', ['#0fc7abcc', '#ff0000dd']);  // 根据类型设置颜色
+
+        // 渲染图表
         chart.render();
     }, [data]);
 
@@ -160,12 +207,13 @@ export default function Profittrend() {
                 <div className='chart'>
                     <MyChart />
                 </div>
+                {/* 蔬菜当月增速同比/环比 */}
                 <div className='dataview'>
                     <div className='table'>
-                        <h3 className='table-title'>当月增速同比/环比</h3>
+                        <h3 className='table-title'>蔬菜当月增速同比/环比</h3>
                         {/* 设置滚轮 */}
                         <div className='table-panel' style={{ 
-                            maxHeight: '300px',  // 设置最大高度
+                            maxHeight: '200px',  // 设置最大高度
                             overflowY: 'auto',   // 添加垂直滚动条
                             overflowX: 'hidden'  // 隐藏水平滚动条
                         }}>
@@ -189,25 +237,35 @@ export default function Profittrend() {
                             ))}
                         </div>
                     </div>
-                    <div className='devote'>
-                        <h3 className='devote-title'>盈利贡献前五</h3>
-                        <div className='devote-list' style={{
-                            maxHeight: '300px',  // 设置最大高度
+                    {/* 鱼类当月增速同比/环比 */}
+                    <div className='devote'>                        
+                        <h3 className='devote-title'>鱼类当月增速同比/环比</h3>
+                      <div className='table-panel' style={{ 
+                            maxHeight: '200px',  // 设置最大高度
                             overflowY: 'auto',   // 添加垂直滚动条
                             overflowX: 'hidden'  // 隐藏水平滚动条
                         }}>
-                            {data.devote.map((item, index) => (
-                                <div className='devote-item' key={index}>
-                                    <div className='devote-text'>
-                                        <span>{item.num * 10000 / 100}%</span>
-                                        <span>{item.title}</span>
+                            
+                            <div className='table-row'>
+                                <span>名称</span>
+                                <span>同比增速</span>
+                                <span>环比增速</span>
+                            </div>
+                            {data.veget.map((item, index) => (
+                                <div className='table-row' key={index}>
+                                    <span>{item.title}</span>
+                                    <div>
+                                        <span>{item.yo * 10000 / 100}%</span>
+                                        <img src={$icon(item.yo > 0 ? 'triangle-up' : 'triangle-down')} />
                                     </div>
-                                    <div className='devote-line'>
-                                        <div style={{ width: item.num * 10000 / 100 + '%' }} />
+                                    <div>
+                                        <span>{item.mo * 10000 / 100}%</span>
+                                        <img src={$icon(item.mo > 0 ? 'triangle-up' : 'triangle-down')} />
                                     </div>
                                 </div>
                             ))}
                         </div>
+
                     </div>
                 </div>
             </div>

@@ -1,13 +1,16 @@
+// 盈利趋势容器的主要样式
 .profittrend {
     padding: 2px 6px 10px;
     margin: 0 auto;
 
+    // 头部区域样式
     .header {
         display: flex;
         align-items: center;
         padding: 12px;
         box-sizing: border-box;
 
+        // 图标样式
         &-icon {
             width: 50px;
             height: 50px;
@@ -22,15 +25,21 @@
                 width: 67%;
             }
         }
+
+        // 左右两侧文字样式
         &-left, &-right {
             color: $text-color;
         }
+
+        // 中间预览区域样式
         &-pre {
             flex: 1;
             display: flex;
             margin: 0 12px;
             flex-direction: column;
             justify-items: center;
+
+            // 比例条样式
             &-line {
                 flex: 1;
                 justify-content: space-between;
@@ -60,13 +69,15 @@
         }
     }
 
+    // 数据视图容器样式
     .dataview {
         display: flex;
         align-items: center;
     }
 
+    // 表格组件通用样式
     .table {
-        flex: 1.35;
+        flex: 1;  // 均分容器空间
         &-title {
             color: $text-light-color;
             padding-left: 12px;
@@ -83,6 +94,8 @@
             display: flex;
             color: $text-color;
             border-bottom: 0.5px solid rgba($theme-color, 0.15);
+            transition: all 0.3s ease;
+            cursor: pointer;
             &:first-of-type {
                 border-radius: 2px 2px 0 0;
                 // color: #222;
@@ -96,6 +109,12 @@
             &:last-of-type {
                 border-radius: 0 0 2px 2px;
                 border: none;
+            }
+
+            &:hover:not(:first-of-type) {
+                background-color: rgba($theme-color, 0.15);
+                transform: scale(1.01);
+                box-shadow: 0 0 10px rgba($theme-color, 0.2);
             }
 
             > span, > div {
@@ -118,6 +137,7 @@
         }
     }
 
+    // 鱼类数据展示区域样式
     .devote {
         flex: 1;
         margin: 0 10px;
@@ -125,6 +145,7 @@
             color: $text-light-color;
             margin: 0;
             font-size: 17.55px;
+            padding-left: 10px; //鱼类当月增速同比/环比 标题右移
         }
         &-text {
             margin-bottom: 1px;
@@ -152,18 +173,21 @@
     }
 }
 
+// 自定义滚动条样式
 .table-panel::-webkit-scrollbar,
 .devote-list::-webkit-scrollbar {
     width: 6px;
     background-color: #f5f5f5;
 }
 
+// 滚动条滑块样式
 .table-panel::-webkit-scrollbar-thumb,
 .devote-list::-webkit-scrollbar-thumb {
     background-color: #0fc7ab;
     border-radius: 3px;
 }
 
+// 滚动条轨道样式
 .table-panel::-webkit-scrollbar-track,
 .devote-list::-webkit-scrollbar-track {
     background-color: #f5f5f5;
