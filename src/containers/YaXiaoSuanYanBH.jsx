@@ -1,10 +1,14 @@
+/**
+ * 亚硝酸盐含量变化监测组件
+ * 用于展示24小时内水产养殖池塘亚硝酸盐含量的变化趋势
+ * 包含异常值警告和适宜值提示功能
+ */
+
 import React, { useEffect, useRef } from 'react';
 import * as echarts from 'echarts';
 import Layout from '../layouts/Box';
 
-// 农场温度变化趋势
-
-export default function Profittrend() {
+export default function YaXiaoSuanYanBH() {
     // 创建图表DOM引用
     const chartRef = useRef(null);
     
@@ -12,10 +16,11 @@ export default function Profittrend() {
         // 生成24小时的时间数组（0-23小时）
         const hours = Array.from({length: 24}, (_, i) => i);
         
-        // 模拟24小时的温度数据
-        const tempData = [
-            13, 30, 11, 10, 11, 12, 14, 27, 18, 20, 22, // 0-10点
-            24, 26, 28, 30, 29, 27, 25, 23, 21, 19, 17, 15, 14  // 11-23点
+        // 模拟24小时的亚硝酸盐含量数据 (正常水产养殖亚硝酸盐含量在0.3-1.0mg/L之间)
+        // 包含了一些异常值用于测试告警功能
+        const nitriteData = [
+            0.5, 0.6, 0.7, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.4, 0.5, // 0-10点
+            1.2, 1.5, 1.3, 1.1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.5, 0.6, 0.5  // 11-23点
         ];
 
         // 初始化 ECharts 实例
@@ -37,15 +42,19 @@ export default function Profittrend() {
                 formatter: function(params) {
                     const value = params[0].value;
                     const hour = params[0].axisValue;
-                    let text = `${hour}时 <br/>温度: ${value}°C`;
+                    let text = `${hour}时 <br/>`;
                     
-                    // 根据温度范围添加不同的提示信息
-                    if (value >= 25) {
-                        text += '<br/><span style="color: #ff4d4f">温度偏高</span>';
-                    } else if (value <= 15) {
-                        text += '<br/><span style="color: #69c0ff">温度偏低</span>';
-                    } else {
-                        text += '<br/><span style="color: #0ee2e2">温度适宜</span>';
+                    // 为极端亚硝酸盐含量添加红色警告样式
+                    const nitriteStyle = value > 1.0 ? 'color: #ff0000;' : '';
+                    text += `<span style="${nitriteStyle}">亚硝酸盐含量: ${value}mg/L</span>`;
+                    
+                    // 根据亚硝酸盐含量范围添加不同的提示信息
+                    if (value >= 0.3 && value <= 1.0) {
+                        text += '<br/><span style="color: #0ee2e2">此时亚硝酸盐含量适宜</span>';
+                    } else if (value > 1.0) {
+                        text += '<br/><span style="color: #ff0000">亚硝酸盐含量过高，需要处理!</span>';
+                    } else if (value < 0.3) {
+                        text += '<br/><span style="color: #ff9900">亚硝酸盐含量偏低</span>';
                     }
                     
                     return text;
@@ -67,10 +76,10 @@ export default function Profittrend() {
             // 配置Y轴
             yAxis: {
                 type: 'value',
-                name: '温度(°C)',
+                name: '亚硝酸盐(mg/L)',
                 min: 0,
-                max: 35,
-                interval: 5,
+                max: 2.0,
+                interval: 0.2,
                 nameTextStyle: {
                     color: '#0ee2e2'  // 设置坐标轴名称颜色
                 },
@@ -88,28 +97,28 @@ export default function Profittrend() {
                     }
                 }
             },
-            // 配置视觉映射组件
+            // 配置视觉映射组件，用于不同区间的颜色显示
             visualMap: {
                 show: false,
                 pieces: [
                     {
-                        gt: 25,  // 温度大于25度显示红色
-                        color: '#ff4d4f'
+                        gt: 1.0,  // 亚硝酸盐含量大于1.0时显示红色
+                        color: '#ff0000'
                     },
                     {
-                        lte: 15,  // 温度小于等于15度显示蓝色
-                        color: '#69c0ff'
+                        lte: 0.3,  // 亚硝酸盐含量小于等于0.3时显示橙色
+                        color: '#ff9900'
                     },
                     {
-                        gt: 15,   // 温度在15-25度之间显示青色
-                        lte: 25,
+                        gt: 0.3,   // 亚硝酸盐含量在0.3-1.0之间显示青色
+                        lte: 1.0,
                         color: '#0ee2e2'
                     }
                 ]
             },
             // 配置数据系列
             series: [{
-                data: tempData,
+                data: nitriteData,
                 type: 'line',
                 smooth: true,  // 启用平滑曲线
                 symbol: 'none', // 不显示数据点标记
@@ -150,8 +159,8 @@ export default function Profittrend() {
 
     // 渲染组件
     return (
-        <Layout title='农场温度变化趋势' style={{ width: '48%', marginTop: '-120px',marginLeft:'-1%' }}>
-            <div ref={chartRef} style={{ height: '300px', width: '100%' }}></div>
+        <Layout title='渔场亚硝酸盐含量变化趋势' style={{ width: '48%', marginTop: '-1050px', marginLeft: '50.5%' }}>
+            <div ref={chartRef} style={{ height: '300px', width: '102%' ,marginLeft: '-3%'}}></div>
         </Layout>
     );
-}
+} 

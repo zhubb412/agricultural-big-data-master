@@ -1,0 +1,16 @@
+@import '../base.scss';
+
+.phzhibh {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    padding: 20px;
+    box-sizing: border-box;
+    
+    &:hover {
+        box-shadow: 0 0 15px rgba(0, 255, 157, 0.2);
+        transform: translateY(-2px);
+        transition: all 0.3s ease;
+    }
+}

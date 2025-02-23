@@ -7,6 +7,10 @@ import Farming from './containers/Farming';
 import Industrial from './containers/Industrial';
 import Advantage from './containers/Advantage';
 import Profittrend from './containers/Profittrend';
+import PHzhiBH from './containers/PHzhiBH';
+import OxygenLevel from './containers/OxygenLevel';
+import SoilMoisture from './containers/SoilMoisture';
+import YaXiaoSuanYanBH from './containers/YaXiaoSuanYanBH';
 
 export default function App() {
     return (
@@ -25,8 +29,13 @@ export default function App() {
                     <div className='main-center-panel'>
                         <Profittrend />
                     </div>
-
-                    <Farming />
+                    <div className='main-center-charts'>
+                        <Farming />
+                        <PHzhiBH />
+                        <YaXiaoSuanYanBH />
+                        <OxygenLevel />
+                        <SoilMoisture />
+                    </div>
                 </div>
             </section>
             {/* <footer>

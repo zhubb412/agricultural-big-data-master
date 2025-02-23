@@ -1,10 +1,14 @@
+/**
+ * PH值变化监测组件
+ * 用于展示24小时内水产养殖池塘PH值的变化趋势
+ * 包含异常值警告和适宜值提示功能
+ */
+
 import React, { useEffect, useRef } from 'react';
 import * as echarts from 'echarts';
 import Layout from '../layouts/Box';
 
-// 农场温度变化趋势
-
-export default function Profittrend() {
+export default function PHzhiBH() {
     // 创建图表DOM引用
     const chartRef = useRef(null);
     
@@ -12,10 +16,11 @@ export default function Profittrend() {
         // 生成24小时的时间数组（0-23小时）
         const hours = Array.from({length: 24}, (_, i) => i);
         
-        // 模拟24小时的温度数据
-        const tempData = [
-            13, 30, 11, 10, 11, 12, 14, 27, 18, 20, 22, // 0-10点
-            24, 26, 28, 30, 29, 27, 25, 23, 21, 19, 17, 15, 14  // 11-23点
+        // 模拟24小时的PH值数据 (正常水产养殖PH值在6.5-8.5之间)
+        // 包含了一些异常值用于测试告警功能
+        const phData = [
+            3.2, 5.1, 7.0, 7.0, 9.1, 7.2, 7.4, 7.5, 4.6, 7.8, 10.0, // 0-10点
+            11.0, 8.1, 8.0, 9.9, 7.8, 7.7, 8.6, 7.5, 7.4, 9.3, 7.2, 7.1, 7.0  // 11-23点
         ];
 
         // 初始化 ECharts 实例
@@ -37,15 +42,19 @@ export default function Profittrend() {
                 formatter: function(params) {
                     const value = params[0].value;
                     const hour = params[0].axisValue;
-                    let text = `${hour}时 <br/>温度: ${value}°C`;
+                    let text = `${hour}时 <br/>`;
                     
-                    // 根据温度范围添加不同的提示信息
-                    if (value >= 25) {
-                        text += '<br/><span style="color: #ff4d4f">温度偏高</span>';
-                    } else if (value <= 15) {
-                        text += '<br/><span style="color: #69c0ff">温度偏低</span>';
-                    } else {
-                        text += '<br/><span style="color: #0ee2e2">温度适宜</span>';
+                    // 为极端PH值添加红色警告样式
+                    const phValueStyle = value >= 10.0 || value < 6.5 ? 'color: #ff0000;' : '';
+                    text += `<span style="${phValueStyle}">PH值: ${value}</span>`;
+                    
+                    // 根据PH值范围添加不同的提示信息
+                    if (value >= 6.5 && value <= 7.5) {
+                        text += '<br/><span style="color: #0ee2e2">此时PH值最宜</span>';
+                    } else if (value >= 10.0) {
+                        text += '<br/><span style="color: #ff0000">此时PH值已达到极限，请注意!!!</span>';
+                    } else if (value < 6.5) {
+                        text += '<br/><span style="color: #ff0000">此时PH值过低!!!</span>';
                     }
                     
                     return text;
@@ -67,10 +76,10 @@ export default function Profittrend() {
             // 配置Y轴
             yAxis: {
                 type: 'value',
-                name: '温度(°C)',
-                min: 0,
-                max: 35,
-                interval: 5,
+                name: 'PH值',
+                min: 3.0,
+                max: 12.0,
+                interval: 0.5,
                 nameTextStyle: {
                     color: '#0ee2e2'  // 设置坐标轴名称颜色
                 },
@@ -88,28 +97,28 @@ export default function Profittrend() {
                     }
                 }
             },
-            // 配置视觉映射组件
+            // 配置视觉映射组件，用于不同区间的颜色显示
             visualMap: {
                 show: false,
                 pieces: [
                     {
-                        gt: 25,  // 温度大于25度显示红色
-                        color: '#ff4d4f'
+                        gt: 10.0,  // PH值大于10时显示红色
+                        color: '#ff0000'
                     },
                     {
-                        lte: 15,  // 温度小于等于15度显示蓝色
-                        color: '#69c0ff'
+                        lte: 6.5,  // PH值小于等于6.5时显示红色
+                        color: '#ff0000'
                     },
                     {
-                        gt: 15,   // 温度在15-25度之间显示青色
-                        lte: 25,
+                        gt: 6.5,   // PH值在6.5-10之间显示青色
+                        lte: 10.0,
                         color: '#0ee2e2'
                     }
                 ]
             },
             // 配置数据系列
             series: [{
-                data: tempData,
+                data: phData,
                 type: 'line',
                 smooth: true,  // 启用平滑曲线
                 symbol: 'none', // 不显示数据点标记
@@ -150,8 +159,8 @@ export default function Profittrend() {
 
     // 渲染组件
     return (
-        <Layout title='农场温度变化趋势' style={{ width: '48%', marginTop: '-120px',marginLeft:'-1%' }}>
-            <div ref={chartRef} style={{ height: '300px', width: '100%' }}></div>
+        <Layout title='渔场PH值变化趋势' style={{ width: '48%', marginTop: '-290px', marginLeft: '50.5%' }}>
+            <div ref={chartRef} style={{ height: '300px', width: '102%' ,marginLeft: '-3%'}}></div>
         </Layout>
     );
 }

@@ -3,7 +3,7 @@ import React from 'react';
 import Layout from '../layouts/Box';
 import { $icon } from '../utils';
 
-// 渔场条件页面
+// 渔场条件页面（右上角）
 
 const Box = ({ icon, list = [] }) => (
     <div className='box'>

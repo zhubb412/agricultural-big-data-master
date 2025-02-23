@@ -1,8 +1,6 @@
 .natural {
     padding: 16px;
     position: relative;
-    background: rgba(47, 238, 226, 0.05);
-    animation: naturalGlowing 3s ease-in-out infinite;
     
     &::after {
         content: '';
@@ -131,21 +129,6 @@
     }
     100% {
         opacity: 0.3;
-    }
-}
-
-@keyframes naturalGlowing {
-    0% {
-        box-shadow: inset 0 0 15px rgba($theme-color, 0.1),
-                    0 0 15px rgba($theme-color, 0.1);
-    }
-    50% {
-        box-shadow: inset 0 0 30px rgba($theme-color, 0.2),
-                    0 0 30px rgba($theme-color, 0.2);
-    }
-    100% {
-        box-shadow: inset 0 0 15px rgba($theme-color, 0.1),
-                    0 0 15px rgba($theme-color, 0.1);
     }
 }
 

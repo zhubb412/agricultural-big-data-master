@@ -1,10 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import * as echarts from 'echarts';
 import Layout from '../layouts/Box';
+import '../styles/containers/soilMoisture.scss';
 
-// 农场温度变化趋势
+// 农场土壤湿度变化趋势
 
-export default function Profittrend() {
+export default function SoilMoisture() {
     // 创建图表DOM引用
     const chartRef = useRef(null);
     
@@ -12,10 +13,10 @@ export default function Profittrend() {
         // 生成24小时的时间数组（0-23小时）
         const hours = Array.from({length: 24}, (_, i) => i);
         
-        // 模拟24小时的温度数据
-        const tempData = [
-            13, 30, 11, 10, 11, 12, 14, 27, 18, 20, 22, // 0-10点
-            24, 26, 28, 30, 29, 27, 25, 23, 21, 19, 17, 15, 14  // 11-23点
+        // 模拟24小时的土壤湿度数据
+        const moistureData = [
+            60, 58, 55, 52, 50, 48, 45, 42, 40, 45, 50, // 0-10点
+            55, 60, 65, 70, 75, 80, 85, 82, 78, 75, 70, 65, 62  // 11-23点
         ];
 
         // 初始化 ECharts 实例
@@ -37,15 +38,15 @@ export default function Profittrend() {
                 formatter: function(params) {
                     const value = params[0].value;
                     const hour = params[0].axisValue;
-                    let text = `${hour}时 <br/>温度: ${value}°C`;
+                    let text = `${hour}时 <br/>土壤湿度: ${value}%`;
                     
-                    // 根据温度范围添加不同的提示信息
-                    if (value >= 25) {
-                        text += '<br/><span style="color: #ff4d4f">温度偏高</span>';
-                    } else if (value <= 15) {
-                        text += '<br/><span style="color: #69c0ff">温度偏低</span>';
+                    // 根据湿度范围添加不同的提示信息
+                    if (value >= 80) {
+                        text += '<br/><span style="color: #ff4d4f">土壤过湿</span>';
+                    } else if (value <= 40) {
+                        text += '<br/><span style="color: #ff4d4f">土壤过干</span>';
                     } else {
-                        text += '<br/><span style="color: #0ee2e2">温度适宜</span>';
+                        text += '<br/><span style="color: #0ee2e2">湿度适宜</span>';
                     }
                     
                     return text;
@@ -57,59 +58,40 @@ export default function Profittrend() {
                 data: hours.map(h => h + ''),
                 axisLine: {
                     lineStyle: {
-                        color: '#0ee2e2'  // 设置坐标轴颜色
+                        color: '#0ee2e2'
                     }
                 },
                 axisLabel: {
-                    color: '#0ee2e2'  // 设置刻度标签颜色
+                    color: '#0ee2e2'
                 }
             },
             // 配置Y轴
             yAxis: {
                 type: 'value',
-                name: '温度(°C)',
+                name: '土壤湿度(%)',
                 min: 0,
-                max: 35,
-                interval: 5,
+                max: 100,
+                interval: 10,
                 nameTextStyle: {
-                    color: '#0ee2e2'  // 设置坐标轴名称颜色
+                    color: '#0ee2e2'
                 },
                 axisLine: {
                     lineStyle: {
-                        color: '#0ee2e2'  // 设置坐标轴颜色
+                        color: '#0ee2e2'
                     }
                 },
                 axisLabel: {
-                    color: '#0ee2e2'  // 设置刻度标签颜色
+                    color: '#0ee2e2'
                 },
                 splitLine: {
                     lineStyle: {
-                        color: 'rgba(14, 226, 226, 0.1)'  // 设置分割线颜色
+                        color: 'rgba(14, 226, 226, 0.1)'
                     }
                 }
             },
-            // 配置视觉映射组件
-            visualMap: {
-                show: false,
-                pieces: [
-                    {
-                        gt: 25,  // 温度大于25度显示红色
-                        color: '#ff4d4f'
-                    },
-                    {
-                        lte: 15,  // 温度小于等于15度显示蓝色
-                        color: '#69c0ff'
-                    },
-                    {
-                        gt: 15,   // 温度在15-25度之间显示青色
-                        lte: 25,
-                        color: '#0ee2e2'
-                    }
-                ]
-            },
             // 配置数据系列
             series: [{
-                data: tempData,
+                data: moistureData,
                 type: 'line',
                 smooth: true,  // 启用平滑曲线
                 symbol: 'none', // 不显示数据点标记
@@ -150,8 +132,8 @@ export default function Profittrend() {
 
     // 渲染组件
     return (
-        <Layout title='农场温度变化趋势' style={{ width: '48%', marginTop: '-120px',marginLeft:'-1%' }}>
-            <div ref={chartRef} style={{ height: '300px', width: '100%' }}></div>
+        <Layout title='农场土壤湿度变化趋势' style={{width:'47%',marginTop: '-400px'}}>
+            <div ref={chartRef} className='soil-moisture-chart'></div>
         </Layout>
     );
-}
+} 
